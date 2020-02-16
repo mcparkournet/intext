@@ -1,0 +1,3 @@
+# Intext
+
+Text internationalization library.
