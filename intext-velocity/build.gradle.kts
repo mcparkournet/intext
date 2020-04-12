@@ -8,5 +8,5 @@ repositories {
 
 dependencies {
 	api(project(":intext-core"))
-	compileOnly("com.velocitypowered:velocity-api:1.0.5")
+	compileOnly("com.velocitypowered:velocity-api:1.0.7")
 }

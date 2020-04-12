@@ -1,3 +1,3 @@
 dependencies {
-	implementation("net.mcparkour:unifig-snakeyaml:1.1.10")
+	implementation("net.mcparkour:unifig-snakeyaml:2.0.0")
 }
