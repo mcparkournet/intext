@@ -22,11 +22,53 @@
  * SOFTWARE.
  */
 
-package net.mcparkour.intext;
+package net.mcparkour.intext.message;
 
 import java.util.Locale;
+import net.kyori.text.Component;
+import net.mcparkour.intext.translation.Translations;
 
-public interface LocaleProvider<T> {
+public interface MessageReceiver {
 
-	Locale provide(T localized);
+	void receiveTranslatedComponent(String translationId, Object... arguments);
+
+	void receiveTranslatedColorized(String translationId, Object... arguments);
+
+	void receiveTranslated(String translationId, Object... arguments);
+
+	void receiveComponent(Component component);
+
+	void receiveSerializedComponent(String serializedComponent);
+
+	default void receivePlainColorized(Iterable<String> messages) {
+		for (String message : messages) {
+			receivePlainColorized(message);
+		}
+	}
+
+	default void receivePlainColorized(String... messages) {
+		for (String message : messages) {
+			receivePlainColorized(message);
+		}
+	}
+
+	void receivePlainColorized(String message);
+
+	default void receivePlain(Iterable<String> messages) {
+		for (String message : messages) {
+			receivePlain(message);
+		}
+	}
+
+	default void receivePlain(String... messages) {
+		for (String message : messages) {
+			receivePlain(message);
+		}
+	}
+
+	void receivePlain(String message);
+
+	Translations getTranslations();
+
+	Locale getLanguage();
 }

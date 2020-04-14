@@ -10,4 +10,5 @@ repositories {
 dependencies {
 	api(project(":intext-core"))
 	compileOnly("io.github.waterfallmc:waterfall-api:1.15-SNAPSHOT")
+	implementation("net.kyori:text-serializer-gson:3.0.3")
 }

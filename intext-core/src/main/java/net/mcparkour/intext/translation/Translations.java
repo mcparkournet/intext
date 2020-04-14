@@ -24,56 +24,66 @@
 
 package net.mcparkour.intext.translation;
 
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-import net.mcparkour.unifig.annotation.Configuration;
+import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
-@Configuration("translations")
 public class Translations {
 
-	private Locale defaultLocale;
-	private Map<String, Map<Locale, String>> texts;
+	private Locale defaultLanguage;
+	private Map<String, Translation> translations;
 
-	public Translations(Locale defaultLocale) {
-		this(defaultLocale, new LinkedHashMap<>(2));
+	public Translations(Locale defaultLanguage, Map<String, Translation> translations) {
+		this.defaultLanguage = defaultLanguage;
+		this.translations = translations;
 	}
 
-	public Translations(Locale defaultLocale, Map<String, Map<Locale, String>> texts) {
-		this.defaultLocale = defaultLocale;
-		this.texts = texts;
+	@Nullable
+	public String getFormattedTranslation(String translationId, Locale language, Object... arguments) {
+		Translation translation = getTranslation(translationId);
+		if (translation == null) {
+			return null;
+		}
+		String text = translation.getFormattedTranslatedText(language, arguments);
+		if (text == null) {
+			text = translation.getFormattedTranslatedText(this.defaultLanguage, arguments);
+		}
+		return text;
+	}
+
+	@Nullable
+	public TranslatedText getTranslation(String translationId, Locale language) {
+		Translation translation = getTranslation(translationId);
+		if (translation == null) {
+			return null;
+		}
+		TranslatedText text = translation.getTranslatedText(language);
+		if (text == null) {
+			text = translation.getTranslatedText(this.defaultLanguage);
+		}
+		return text;
 	}
 
 	public boolean hasTranslation(String translationId) {
-		Map<Locale, String> translationsMap = this.texts.get(translationId);
-		return translationsMap != null;
+		return this.translations.containsKey(translationId);
+	}
+
+	public Optional<Translation> getTranslationOptional(String translationId) {
+		Translation translation = getTranslation(translationId);
+		return Optional.ofNullable(translation);
 	}
 
 	@Nullable
 	public Translation getTranslation(String translationId) {
-		Map<Locale, String> translationsMap = this.texts.get(translationId);
-		if (translationsMap == null) {
-			return null;
-		}
-		return new Translation(translationId, translationsMap);
+		return this.translations.get(translationId);
 	}
 
-	public void addTranslation(Translation translation) {
-		String translationId = translation.getTranslationId();
-		Map<Locale, String> translations = translation.getTranslations();
-		this.texts.put(translationId, translations);
+	public Locale getDefaultLanguage() {
+		return this.defaultLanguage;
 	}
 
-	public Locale getDefaultLocale() {
-		return this.defaultLocale;
-	}
-
-	public void setDefaultLocale(Locale defaultLocale) {
-		this.defaultLocale = defaultLocale;
-	}
-
-	public Map<String, Map<Locale, String>> getTexts() {
-		return this.texts;
+	public Map<String, Translation> getTranslations() {
+		return Map.copyOf(this.translations);
 	}
 }

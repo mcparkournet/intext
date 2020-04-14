@@ -22,8 +22,16 @@
  * SOFTWARE.
  */
 
-package net.mcparkour.intext;
+package net.mcparkour.intext.message;
 
-public class IntextVelocity extends Intext {
+import java.util.Locale;
+import net.mcparkour.intext.translation.Translations;
 
+public interface MessageReceiverFactory<T> {
+
+	MessageReceiver createMessageReceiver(Translations translations, T receiver);
+
+	<U extends T> MessageReceiver createMessageReceiver(Translations translations, U receiver, LanguageProvider<U> provider);
+
+	MessageReceiver createMessageReceiver(Translations translations, T receiver, Locale language);
 }

@@ -24,39 +24,68 @@
 
 package net.mcparkour.intext;
 
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import net.mcparkour.intext.translation.TranslatedText;
+import net.mcparkour.intext.translation.Translation;
 import net.mcparkour.intext.translation.Translations;
 import net.mcparkour.unifig.Configuration;
 import net.mcparkour.unifig.ConfigurationFactory;
 import net.mcparkour.unifig.SnakeyamlConfigurationFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Intext {
 
-	protected static final Locale DEFAULT_LOCALE = Locale.US;
+	public static final Logger LOGGER = LoggerFactory.getLogger(Intext.class);
 
-	private Configuration<Translations> configuration;
-	private Translations translations;
+	private static final Locale DEFAULT_LANGUAGE = Locale.US;
+
+	private Configuration<IntextConfiguration> configuration;
 
 	public Intext() {
 		this.configuration = createConfiguration();
-		this.translations = this.configuration.read();
 	}
 
-	private static Configuration<Translations> createConfiguration() {
+	private static Configuration<IntextConfiguration> createConfiguration() {
 		ConfigurationFactory configurationFactory = new SnakeyamlConfigurationFactory();
-		Translations defaultTranslations = new Translations(DEFAULT_LOCALE);
-		return configurationFactory.createConfiguration(Translations.class, defaultTranslations);
+		IntextConfiguration defaultConfiguration = new IntextConfiguration(DEFAULT_LANGUAGE, new LinkedHashMap<>(0));
+		return configurationFactory.createConfiguration(IntextConfiguration.class, defaultConfiguration);
 	}
 
-	public void loadTranslations() {
-		this.translations = this.configuration.read();
+	public Translations loadTranslations() {
+		IntextConfiguration configuration = this.configuration.read();
+		Locale defaultLocale = configuration.getDefaultLanguage();
+		Map<String, Map<Locale, String>> configurationTranslations = configuration.getTranslations();
+		Map<String, Translation> translations = configurationTranslations.entrySet().stream()
+			.collect(Collectors.toUnmodifiableMap(Entry::getKey, Intext::createTranslation));
+		return new Translations(defaultLocale, translations);
 	}
 
-	public void saveTranslations() {
-		this.configuration.write(this.translations);
+	private static Translation createTranslation(Entry<String, Map<Locale, String>> entry) {
+		String translationId = entry.getKey();
+		Map<Locale, String> map = entry.getValue();
+		Map<Locale, TranslatedText> translatedTexts = map.entrySet().stream()
+			.collect(Collectors.toUnmodifiableMap(Entry::getKey, TranslatedText::new));
+		return new Translation(translationId, translatedTexts);
 	}
 
-	protected Translations getTranslations() {
-		return this.translations;
+	public void saveTranslations(Translations translations) {
+		Locale defaultLocale = translations.getDefaultLanguage();
+		Map<String, Translation> translationMap = translations.getTranslations();
+		Map<String, Map<Locale, String>> translationsMap = translationMap.entrySet().stream()
+			.collect(Collectors.toUnmodifiableMap(Entry::getKey, Intext::createTranslationMap));
+		IntextConfiguration configuration = new IntextConfiguration(defaultLocale, translationsMap);
+		this.configuration.write(configuration);
+	}
+
+	private static Map<Locale, String> createTranslationMap(Entry<String, Translation> translationsEntry) {
+		Translation translation = translationsEntry.getValue();
+		Map<Locale, TranslatedText> translatedTexts = translation.getTranslatedTexts();
+		return translatedTexts.entrySet().stream()
+			.collect(Collectors.toUnmodifiableMap(Entry::getKey, entry -> entry.getValue().getText()));
 	}
 }

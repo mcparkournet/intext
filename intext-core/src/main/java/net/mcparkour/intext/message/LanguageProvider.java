@@ -22,8 +22,11 @@
  * SOFTWARE.
  */
 
-package net.mcparkour.intext;
+package net.mcparkour.intext.message;
 
-public class IntextWaterfall extends Intext {
+import java.util.Locale;
 
+public interface LanguageProvider<T> {
+
+	Locale provide(T localized);
 }

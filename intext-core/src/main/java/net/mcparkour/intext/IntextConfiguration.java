@@ -22,38 +22,31 @@
  * SOFTWARE.
  */
 
-package net.mcparkour.intext.translation;
+package net.mcparkour.intext;
 
-import java.util.Formatter;
+import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Map.Entry;
+import java.util.Map;
+import net.mcparkour.octenace.annotation.Codec;
+import net.mcparkour.unifig.annotation.Configuration;
 
-public class TranslatedText {
+@Configuration("translations")
+public class IntextConfiguration {
 
-	private Locale language;
-	private String text;
-	private Formatter formatter;
+	private Locale defaultLanguage;
+	@Codec(LinkedHashMap.class)
+	private Map<String, Map<Locale, String>> translations;
 
-	public TranslatedText(Entry<Locale, String> entry) {
-		this(entry.getKey(), entry.getValue());
+	public IntextConfiguration(Locale defaultLanguage, Map<String, Map<Locale, String>> translations) {
+		this.defaultLanguage = defaultLanguage;
+		this.translations = translations;
 	}
 
-	public TranslatedText(Locale language, String text) {
-		this.language = language;
-		this.text = text;
-		this.formatter = new Formatter(language);
+	public Locale getDefaultLanguage() {
+		return this.defaultLanguage;
 	}
 
-	public String format(Object... arguments) {
-		Formatter format = this.formatter.format(this.text, arguments);
-		return format.toString();
-	}
-
-	public Locale getLanguage() {
-		return this.language;
-	}
-
-	public String getText() {
-		return this.text;
+	public Map<String, Map<Locale, String>> getTranslations() {
+		return Map.copyOf(this.translations);
 	}
 }

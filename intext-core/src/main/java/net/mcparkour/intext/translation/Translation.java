@@ -24,50 +24,49 @@
 
 package net.mcparkour.intext.translation;
 
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 public class Translation {
 
 	private String translationId;
-	private Map<Locale, String> translations;
+	private Map<Locale, TranslatedText> translatedTexts;
 
-	public Translation(String translationId) {
-		this(translationId, new LinkedHashMap<>(2));
-	}
-
-	public Translation(String translationId, Map<Locale, String> translations) {
+	public Translation(String translationId, Map<Locale, TranslatedText> translatedTexts) {
 		this.translationId = translationId;
-		this.translations = translations;
-	}
-
-	public boolean hasTranslatedText(Locale locale) {
-		String text = this.translations.get(locale);
-		return text != null;
+		this.translatedTexts = translatedTexts;
 	}
 
 	@Nullable
-	public TranslatedText getTranslatedText(Locale locale) {
-		String text = this.translations.get(locale);
+	public String getFormattedTranslatedText(Locale language, Object... arguments) {
+		TranslatedText text = getTranslatedText(language);
 		if (text == null) {
 			return null;
 		}
-		return new TranslatedText(locale, text);
+		return text.format(arguments);
 	}
 
-	public void addTranslatedText(TranslatedText translatedText) {
-		Locale locale = translatedText.getLocale();
-		String text = translatedText.getText();
-		this.translations.put(locale, text);
+	public boolean hasTranslatedText(Locale language) {
+		return this.translatedTexts.containsKey(language);
+	}
+
+	public Optional<TranslatedText> getTranslatedTextOptional(Locale language) {
+		TranslatedText translatedText = getTranslatedText(language);
+		return Optional.ofNullable(translatedText);
+	}
+
+	@Nullable
+	public TranslatedText getTranslatedText(Locale language) {
+		return this.translatedTexts.get(language);
 	}
 
 	public String getTranslationId() {
 		return this.translationId;
 	}
 
-	public Map<Locale, String> getTranslations() {
-		return this.translations;
+	public Map<Locale, TranslatedText> getTranslatedTexts() {
+		return Map.copyOf(this.translatedTexts);
 	}
 }
