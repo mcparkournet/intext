@@ -24,6 +24,7 @@
 
 package net.mcparkour.intext;
 
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -35,6 +36,8 @@ import net.mcparkour.intext.translation.Translations;
 import net.mcparkour.unifig.Configuration;
 import net.mcparkour.unifig.ConfigurationFactory;
 import net.mcparkour.unifig.SnakeyamlConfigurationFactory;
+import net.mcparkour.unifig.options.Options;
+import net.mcparkour.unifig.options.OptionsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,13 +50,22 @@ public class Intext {
 	private Configuration<IntextConfiguration> configuration;
 
 	public Intext() {
-		this.configuration = createConfiguration();
+		this(Path.of(""));
 	}
 
-	private static Configuration<IntextConfiguration> createConfiguration() {
+	public Intext(Path configurationDirectory) {
+		this.configuration = createConfiguration(configurationDirectory);
+	}
+
+	private static Configuration<IntextConfiguration> createConfiguration(Path configurationDirectory) {
 		ConfigurationFactory configurationFactory = new SnakeyamlConfigurationFactory();
 		IntextConfiguration defaultConfiguration = new IntextConfiguration(DEFAULT_LANGUAGE, new LinkedHashMap<>(0));
-		return configurationFactory.createConfiguration(IntextConfiguration.class, defaultConfiguration);
+		Options defaultOptions = configurationFactory.createOptions();
+		Options options = new OptionsBuilder()
+			.options(defaultOptions)
+			.directoryPath(configurationDirectory)
+			.build();
+		return configurationFactory.createConfiguration(IntextConfiguration.class, defaultConfiguration, options);
 	}
 
 	public Translations loadTranslations() {
