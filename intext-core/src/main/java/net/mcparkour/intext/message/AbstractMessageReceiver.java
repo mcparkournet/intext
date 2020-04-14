@@ -83,8 +83,14 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
 			String languageName = this.language.getDisplayLanguage();
 			Locale defaultLanguage = this.translations.getDefaultLanguage();
 			String defaultLanguageName = defaultLanguage.getDisplayLanguage();
-			Intext.LOGGER.warn("Missing translated text for the {} and {} languages.", languageName, defaultLanguageName);
-			TextComponent message = Messages.createMissingTranslatedTextMessage(languageName, defaultLanguageName);
+			TextComponent message;
+			if (languageName.equals(defaultLanguageName)) {
+				Intext.LOGGER.warn("Missing translated text for the {} language.", languageName);
+				message = Messages.createMissingTranslatedTextMessage(languageName);
+			} else {
+				Intext.LOGGER.warn("Missing translated text for the {} and {} (default) languages.", languageName, defaultLanguageName);
+				message = Messages.createMissingTranslatedTextMessage(languageName, defaultLanguageName);
+			}
 			receiveComponent(message);
 			return null;
 		}

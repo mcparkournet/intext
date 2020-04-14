@@ -50,6 +50,23 @@ public final class Messages {
 			.build();
 	}
 
+	public static TextComponent createMissingTranslatedTextMessage(String languageName) {
+		return TextComponent.builder()
+			.append(TextComponent.builder()
+				.content("Missing translated text for the ")
+				.color(TextColor.RED)
+				.build())
+			.append(TextComponent.builder()
+				.content(languageName)
+				.color(TextColor.GRAY)
+				.build())
+			.append(TextComponent.builder()
+				.content(" language.")
+				.color(TextColor.RED)
+				.build())
+			.build();
+	}
+
 	public static TextComponent createMissingTranslatedTextMessage(String languageName, String defaultLanguageName) {
 		return TextComponent.builder()
 			.append(TextComponent.builder()
