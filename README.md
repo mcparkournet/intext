@@ -12,6 +12,6 @@ repositories {
 }
 
 dependencies {
-    implementation("net.mcparkour:intext-paper:1.1.2")
+    implementation("net.mcparkour:intext-paper:1.1.3")
 }
 ```

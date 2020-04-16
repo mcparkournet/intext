@@ -24,7 +24,6 @@
 
 package net.mcparkour.intext.translation;
 
-import java.util.Formatter;
 import java.util.Locale;
 import java.util.Map.Entry;
 
@@ -32,7 +31,6 @@ public class TranslatedText {
 
 	private Locale language;
 	private String text;
-	private Formatter formatter;
 
 	public TranslatedText(Entry<Locale, String> entry) {
 		this(entry.getKey(), entry.getValue());
@@ -41,12 +39,10 @@ public class TranslatedText {
 	public TranslatedText(Locale language, String text) {
 		this.language = language;
 		this.text = text;
-		this.formatter = new Formatter(language);
 	}
 
 	public String format(Object... arguments) {
-		Formatter format = this.formatter.format(this.text, arguments);
-		return format.toString();
+		return String.format(this.language, this.text, arguments);
 	}
 
 	public Locale getLanguage() {
