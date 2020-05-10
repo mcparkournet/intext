@@ -24,7 +24,11 @@
 
 package net.mcparkour.intext.message;
 
+import java.util.Locale;
+
 public interface MessageReceiverFactory<T> {
 
 	MessageReceiver createMessageReceiver(T receiver);
+
+	MessageReceiver createMessageReceiver(T receiver, Locale language);
 }

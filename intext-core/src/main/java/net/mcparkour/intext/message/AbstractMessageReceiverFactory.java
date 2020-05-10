@@ -43,8 +43,6 @@ public abstract class AbstractMessageReceiverFactory<T> implements MessageReceiv
 		return createMessageReceiver(receiver, language);
 	}
 
-	public abstract MessageReceiver createMessageReceiver(T receiver, Locale language);
-
 	public Translations getTranslations() {
 		return this.translations;
 	}
