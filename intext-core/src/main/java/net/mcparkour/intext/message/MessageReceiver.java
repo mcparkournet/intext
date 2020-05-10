@@ -26,7 +26,6 @@ package net.mcparkour.intext.message;
 
 import java.util.Locale;
 import net.kyori.text.Component;
-import net.mcparkour.intext.translation.Translations;
 
 public interface MessageReceiver {
 
@@ -67,8 +66,6 @@ public interface MessageReceiver {
 	}
 
 	void receivePlain(String message);
-
-	Translations getTranslations();
 
 	Locale getLanguage();
 }

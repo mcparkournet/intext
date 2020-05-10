@@ -27,34 +27,16 @@ package net.mcparkour.intext.message;
 import java.util.Locale;
 import net.mcparkour.intext.translation.Translations;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-public class WaterfallMessageReceiverFactory implements MessageReceiverFactory<CommandSender> {
+public class WaterfallMessageReceiverFactory extends AbstractMessageReceiverFactory<CommandSender> {
 
-	public static final LanguageProvider<ProxiedPlayer> PLAYER_LOCALE_PROVIDER = ProxiedPlayer::getLocale;
-
-	@Override
-	public MessageReceiver createMessageReceiver(Translations translations, CommandSender receiver) {
-		if (receiver instanceof ProxiedPlayer) {
-			ProxiedPlayer player = (ProxiedPlayer) receiver;
-			return createMessageReceiver(translations, player);
-		}
-		Locale defaultLanguage = translations.getDefaultLanguage();
-		return createMessageReceiver(translations, receiver, defaultLanguage);
-	}
-
-	public MessageReceiver createMessageReceiver(Translations translations, ProxiedPlayer receiver) {
-		return createMessageReceiver(translations, receiver, PLAYER_LOCALE_PROVIDER);
+	public WaterfallMessageReceiverFactory(Translations translations, LanguageProvider<CommandSender> provider) {
+		super(translations, provider);
 	}
 
 	@Override
-	public <U extends CommandSender> MessageReceiver createMessageReceiver(Translations translations, U receiver, LanguageProvider<U> provider) {
-		Locale language = provider.provide(receiver);
-		return createMessageReceiver(translations, receiver, language);
-	}
-
-	@Override
-	public MessageReceiver createMessageReceiver(Translations translations, CommandSender receiver, Locale language) {
+	public MessageReceiver createMessageReceiver(CommandSender receiver, Locale language) {
+		Translations translations = getTranslations();
 		return new WaterfallMessageReceiver(translations, language, receiver);
 	}
 }

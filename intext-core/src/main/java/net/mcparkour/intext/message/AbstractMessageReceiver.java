@@ -107,7 +107,6 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
 		return translatedText;
 	}
 
-	@Override
 	public Translations getTranslations() {
 		return this.translations;
 	}

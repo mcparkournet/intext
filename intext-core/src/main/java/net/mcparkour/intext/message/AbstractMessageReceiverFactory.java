@@ -26,17 +26,26 @@ package net.mcparkour.intext.message;
 
 import java.util.Locale;
 import net.mcparkour.intext.translation.Translations;
-import org.bukkit.command.CommandSender;
 
-public class PaperMessageReceiverFactory extends AbstractMessageReceiverFactory<CommandSender> {
+public abstract class AbstractMessageReceiverFactory<T> implements MessageReceiverFactory<T> {
 
-	public PaperMessageReceiverFactory(Translations translations, LanguageProvider<CommandSender> provider) {
-		super(translations, provider);
+	private Translations translations;
+	private LanguageProvider<T> provider;
+
+	public AbstractMessageReceiverFactory(Translations translations, LanguageProvider<T> provider) {
+		this.translations = translations;
+		this.provider = provider;
 	}
 
 	@Override
-	public MessageReceiver createMessageReceiver(CommandSender receiver, Locale language) {
-		Translations translations = getTranslations();
-		return new PaperMessageReceiver(translations, language, receiver);
+	public MessageReceiver createMessageReceiver(T receiver) {
+		Locale language = this.provider.provide(receiver);
+		return createMessageReceiver(receiver, language);
+	}
+
+	public abstract MessageReceiver createMessageReceiver(T receiver, Locale language);
+
+	public Translations getTranslations() {
+		return this.translations;
 	}
 }

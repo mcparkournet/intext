@@ -26,41 +26,17 @@ package net.mcparkour.intext.message;
 
 import java.util.Locale;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.player.PlayerSettings;
 import net.mcparkour.intext.translation.Translations;
 
-public class VelocityMessageReceiverFactory implements MessageReceiverFactory<CommandSource> {
+public class VelocityMessageReceiverFactory extends AbstractMessageReceiverFactory<CommandSource> {
 
-	public static final LanguageProvider<Player> PLAYER_LOCALE_PROVIDER = VelocityMessageReceiverFactory::getPlayerLocale;
-
-	private static Locale getPlayerLocale(Player player) {
-		PlayerSettings settings = player.getPlayerSettings();
-		return settings.getLocale();
+	public VelocityMessageReceiverFactory(Translations translations, LanguageProvider<CommandSource> provider) {
+		super(translations, provider);
 	}
 
 	@Override
-	public MessageReceiver createMessageReceiver(Translations translations, CommandSource receiver) {
-		if (receiver instanceof Player) {
-			Player player = (Player) receiver;
-			return createMessageReceiver(translations, player);
-		}
-		Locale defaultLanguage = translations.getDefaultLanguage();
-		return createMessageReceiver(translations, receiver, defaultLanguage);
-	}
-
-	public MessageReceiver createMessageReceiver(Translations translations, Player receiver) {
-		return createMessageReceiver(translations, receiver, PLAYER_LOCALE_PROVIDER);
-	}
-
-	@Override
-	public <U extends CommandSource> MessageReceiver createMessageReceiver(Translations translations, U receiver, LanguageProvider<U> provider) {
-		Locale language = provider.provide(receiver);
-		return createMessageReceiver(translations, receiver, language);
-	}
-
-	@Override
-	public MessageReceiver createMessageReceiver(Translations translations, CommandSource receiver, Locale language) {
+	public MessageReceiver createMessageReceiver(CommandSource receiver, Locale language) {
+		Translations translations = getTranslations();
 		return new VelocityMessageReceiver(translations, language, receiver);
 	}
 }
