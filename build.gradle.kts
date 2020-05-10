@@ -19,12 +19,21 @@ subprojects {
 
 	dependencies {
 		compileOnly("org.jetbrains:annotations:19.0.0")
+		testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
+		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+		testCompileOnly("org.jetbrains:annotations:19.0.0")
 	}
 
 	java {
 		sourceCompatibility = JavaVersion.VERSION_11
 		targetCompatibility = JavaVersion.VERSION_11
 		withSourcesJar()
+	}
+
+	tasks {
+		test {
+			useJUnitPlatform()
+		}
 	}
 
 	publishing {
