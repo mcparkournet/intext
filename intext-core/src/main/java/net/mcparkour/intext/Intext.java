@@ -60,9 +60,8 @@ public class Intext {
 	private static Configuration<IntextConfiguration> createConfiguration(Path configurationDirectory) {
 		ConfigurationFactory configurationFactory = new SnakeyamlConfigurationFactory();
 		IntextConfiguration defaultConfiguration = new IntextConfiguration(DEFAULT_LANGUAGE, new LinkedHashMap<>(0));
-		Options defaultOptions = configurationFactory.createOptions();
 		Options options = new OptionsBuilder()
-			.options(defaultOptions)
+			.options(SnakeyamlConfigurationFactory.SNAKEYAML_DEFAULT_OPTIONS)
 			.directoryPath(configurationDirectory)
 			.build();
 		return configurationFactory.createConfiguration(IntextConfiguration.class, defaultConfiguration, options);
